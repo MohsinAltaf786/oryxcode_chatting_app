@@ -1,9 +1,11 @@
 import 'package:chat_flow/core/bloc/language_bloc/language_bloc.dart';
 import 'package:chat_flow/core/bloc/theme_bloc/theme_bloc.dart';
+import 'package:chat_flow/core/services/shared_prefrences_service.dart';
 import 'package:chat_flow/core/storage/local_storage.dart';
 import 'package:chat_flow/core/theme/app_theme.dart';
 import 'package:chat_flow/core/utils/navigator.dart';
 import 'package:chat_flow/presentation/auth/welcome_screen.dart';
+import 'package:chat_flow/presentation/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -27,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _initializeThemeAndNavigate() async {
     final savedTheme = _localStorage.getTheme();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       AppTheme theme;
       if (savedTheme == AppTheme.darkTheme.toString()) {
         theme = AppTheme.darkTheme;
@@ -44,9 +46,14 @@ class _SplashScreenState extends State<SplashScreen> {
       BlocProvider.of<ThemeBloc>(context).add(ThemeEvent(appTheme: theme));
 
       checkCurrentLocale();
-
-      navigateToScreen(context, const WelcomeScreen(),
-          clearPreviousRoutes: true);
+      final isAuthentucated= await SharedPrefsService.getAccessToken();
+      print('token $isAuthentucated');
+     if(isAuthentucated!=null&&(isAuthentucated??'').isNotEmpty){
+       navigateToScreen(context, const Dashboard(),
+           clearPreviousRoutes: true);
+     }
+     else{navigateToScreen(context, const WelcomeScreen(),
+         clearPreviousRoutes: true);}
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:chat_flow/core/network/api_result.dart';
 import 'package:chat_flow/core/repository/auth_repository.dart';
+import 'package:chat_flow/core/services/shared_prefrences_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'config_event.dart';
 import 'config_state.dart';
@@ -125,8 +126,11 @@ class ConfigBloc extends Bloc<ConfigEvent, ConfigState> {
           deviceSyncToken:event.deviceSyncToken,
         );
         if (result is Success) {
-
-          // emit(OtpRequested(success: true));
+          await SharedPrefsService.saveTokens(accessToken:result.data['token'],);
+          emit(PublicRegistrationSuccess(success: true));
+        }
+        else if(result is Failure){
+          emit(ConfigError(result.error));
         }
       } catch (e) {
         emit(ConfigError(e.toString()));

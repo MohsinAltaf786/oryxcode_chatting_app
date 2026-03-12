@@ -28,42 +28,6 @@ class PairingScreen extends StatefulWidget {
 }
 
 class _PairingScreenState extends State<PairingScreen> {
-  /// Encrypt private key using system public key
-  // String privateKeyToPem(PrivateKey privateKey) {
-  //   return CryptoUtils.encodeRSAPrivateKeyToPem(privateKey as RSAPrivateKey);
-  // }
-  //
-  // String publicKeyToPem(PublicKey publicKey) {
-  //   return CryptoUtils.encodeRSAPublicKeyToPem(publicKey as RSAPublicKey);
-  // }
-
-  /// Generate RSA key pair
-  // AsymmetricKeyPair<PublicKey, PrivateKey> generateRSAKeys() {
-  //   return CryptoUtils.generateRSAKeyPair();
-  // }
-
-  // Future<String> encryptPrivateKey(
-  //     String privateKeyPem,
-  //     String systemSyncPublicKeyPem,
-  //     )
-  // async {
-  //
-  //   final publicKey = CryptoUtils.rsaPublicKeyFromPem(systemSyncPublicKeyPem);
-  //
-  //   final encrypted = CryptoUtils.rsaEncrypt(
-  //     privateKeyPem,
-  //     publicKey,
-  //   );
-  //
-  //   return base64Encode(utf8.encode(encrypted));
-  // }
-  String encryptPrivateKey(String privateKeyPem) {
-    final systemPublicKey = CryptoUtils.rsaPublicKeyFromPem(SYSTEM_SYNC_PUBLIC_KEY);
-    final encrypted = CryptoUtils.rsaEncrypt(privateKeyPem, systemPublicKey);
-    return base64Encode(utf8.encode(encrypted));
-  }
-
-  // final deviceSyncToken = encryptPrivateKey(privatePem);
   @override
   void initState() {
     // TODO: implement initState

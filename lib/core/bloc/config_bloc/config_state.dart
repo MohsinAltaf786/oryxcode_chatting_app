@@ -44,3 +44,11 @@ class OtpRequested extends ConfigState {
     required this.success,
   });
 }
+
+class PublicRegistrationSuccess extends ConfigState {
+  final bool success;
+
+  PublicRegistrationSuccess({
+    required this.success,
+  });
+}

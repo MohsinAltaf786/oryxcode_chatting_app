@@ -9,6 +9,7 @@ import 'package:chat_flow/core/utils/styles.dart';
 import 'package:chat_flow/presentation/auth/login_screen.dart';
 import 'package:chat_flow/presentation/auth/pairing_screen.dart';
 import 'package:chat_flow/presentation/auth/passcode_screen.dart';
+import 'package:chat_flow/presentation/auth/sign_up_screen.dart';
 import 'package:chat_flow/presentation/widgets/custom_button.dart';
 import 'package:chat_flow/presentation/widgets/image_widget.dart';
 import 'package:chat_flow/presentation/widgets/spacing.dart';
@@ -50,7 +51,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Navigator.pop(context); // close loader
            print('is public registration enabled ${state.publicRegistrationEnabled}');
           if (state.publicRegistrationEnabled) {
-            navigateToScreen(context, const LoginScreen(),
+            navigateToScreen(context, const SignUpScreen(),
                 clearPreviousRoutes: true);
             // navigateToScreen(context, const SignUpScreen());
 

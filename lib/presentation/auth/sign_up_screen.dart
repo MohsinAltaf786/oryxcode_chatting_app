@@ -1,8 +1,10 @@
 import 'package:chat_flow/core/bloc/config_bloc/config_bloc.dart';
 import 'package:chat_flow/core/bloc/config_bloc/config_event.dart';
 import 'package:chat_flow/core/bloc/config_bloc/config_state.dart';
+import 'package:chat_flow/core/bloc/models/public_registration_model.dart';
 import 'package:chat_flow/core/constants/assets_const.dart';
 import 'package:chat_flow/core/constants/image_type_const.dart';
+import 'package:chat_flow/core/services/app_snackbar_service.dart';
 import 'package:chat_flow/core/theme/colors.dart';
 import 'package:chat_flow/core/utils/global_methods.dart';
 import 'package:chat_flow/core/utils/navigator.dart';
@@ -51,8 +53,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           spacing(height: 15),
           _buildButtons(mobileController: mobileController,nameController: nameController,countryCode:countryCode),
           spacing(height: 20),
-          _buildSignUp(),
-          spacing(height: 20),
+         // _buildSignUp(),
+          //spacing(height: 20),
         ],
       ),
     );
@@ -197,10 +199,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
   //           curve: Curves.easeOut);
   // }
 
-  Widget _buildButtons({required TextEditingController nameController,required TextEditingController mobileController,required ValueNotifier<String> countryCode}) {
-    return BlocBuilder<ConfigBloc, ConfigState>(
-      builder: (context, state) {
+  Widget _buildButtons({
+    required TextEditingController nameController,
+    required TextEditingController mobileController,
+    required ValueNotifier<String> countryCode,
+  }) {
+    return BlocConsumer<ConfigBloc, ConfigState>(
+      listener: (context, state) {
+        if (state is OtpRequested && state.success) {
+          final phoneNumber = '${countryCode.value}${mobileController.text}';
+          final publicRegistration=PublicRegistrationModel(name: nameController.text,mobile:phoneNumber);
 
+
+          print('otp received');
+
+          navigateToScreen(
+            context,
+            OtpScreen(publicRegistrationModel:publicRegistration),
+          );
+        }
+      },
+      builder: (context, state) {
         bool isLoading = state is ConfigLoading;
 
         return Center(
@@ -212,53 +231,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
             yPadding: 12,
             width: 320,
             onTap: () {
-               final phoneNumber='${countryCode.value}${mobileController.text}';
-               print('phone: $phoneNumber');
-               context.read<ConfigBloc>().add(
+              if(nameController.text.isEmpty){
+                AppSnackBarService.showTopSnackbar(message:'Name can\'t be empty!', context: context);
+                return;
+              }
+              if(mobileController.text.isEmpty){
+                AppSnackBarService.showTopSnackbar(message:'Phone number can\'t be empty!', context: context);
+                return;
+              }
+              final phoneNumber =
+                  '${countryCode.value}${mobileController.text}';
+
+              print('phone: $phoneNumber');
+
+              context.read<ConfigBloc>().add(
                 RequestOtpEvent(
-                  mobileNumber:phoneNumber,
+                  mobileNumber: phoneNumber,
                 ),
               );
-               if(state is OtpRequested&&state.success){
-                 print('otp received');
-                 navigateToScreen(context, const OtpScreen(),);
-               }
-
             },
           ),
         );
       },
     );
   }
-
-  Widget _buildSignUp() {
-    return Row(
-      mainAxisAlignment: .center,
-      children: [
-        Text(
-          trans(context, key: 'already_have_an_account'),
-          style: StyleHelper.titleSmall(context),
-        ),
-        spacing(width: 8),
-        GestureDetector(
-          onTap: () {
-            navigateToScreen(context, const LoginScreen(), replace: true);
-          },
-          behavior: HitTestBehavior.opaque,
-          child: Text(trans(context, key: 'login'),
-              style: StyleHelper.titleSmall(context)
-                  ?.copyWith(color: AppColors.primary)),
-        ),
-      ],
-    )
-        .animate(
-          delay: const Duration(milliseconds: 800),
-        )
-        .fade(
-            duration: const Duration(milliseconds: 200), curve: Curves.easeOut)
-        .slideY(
-            begin: 0.3,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut);
-  }
+  // Widget _buildSignUp() {
+  //   return Row(
+  //     mainAxisAlignment: .center,
+  //     children: [
+  //       Text(
+  //         trans(context, key: 'already_have_an_account'),
+  //         style: StyleHelper.titleSmall(context),
+  //       ),
+  //       spacing(width: 8),
+  //       GestureDetector(
+  //         onTap: () {
+  //           navigateToScreen(context, const LoginScreen(), replace: true);
+  //         },
+  //         behavior: HitTestBehavior.opaque,
+  //         child: Text(trans(context, key: 'login'),
+  //             style: StyleHelper.titleSmall(context)
+  //                 ?.copyWith(color: AppColors.primary)),
+  //       ),
+  //     ],
+  //   )
+  //       .animate(
+  //         delay: const Duration(milliseconds: 800),
+  //       )
+  //       .fade(
+  //           duration: const Duration(milliseconds: 200), curve: Curves.easeOut)
+  //       .slideY(
+  //           begin: 0.3,
+  //           duration: const Duration(milliseconds: 300),
+  //           curve: Curves.easeOut);
+  //}
 }

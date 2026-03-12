@@ -7,12 +7,12 @@ class SharedPrefsService {
   static const String _driverModeKey='drivermode';
 
   static Future<void> saveTokens({
-    required String accessToken,
-    required String refreshToken,
+     String? accessToken,
+    String? refreshToken,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_accessTokenKey, accessToken);
-    await prefs.setString(_refreshTokenKey, refreshToken);
+    if(accessToken!=null)await prefs.setString(_accessTokenKey, accessToken);
+   if(refreshToken!=null) await prefs.setString(_refreshTokenKey, refreshToken);
   }
 
   static Future<String?> getAccessToken() async {

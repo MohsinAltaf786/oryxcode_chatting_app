@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'config_bloc/config_bloc.dart';
+import 'otp_bloc/otp_timer_bloc.dart';
 
 class AppBlocProvider extends StatelessWidget {
   const AppBlocProvider({super.key, required this.child});
@@ -20,6 +21,9 @@ class AppBlocProvider extends StatelessWidget {
       BlocProvider(
         create: (context) => ConfigBloc(AuthRepository(AppApiClient()),),
       ),
+      BlocProvider(
+        create: (context) => OtpTimerBloc(),
+      )
     ], child: child);
   }
 }
